@@ -1,37 +1,90 @@
 <template>
-  <div>
-    <a-button type="primary" @click="showModal">Open Modal</a-button>
-    <a-modal
-      title="Basic Modal"
-      v-model="visible"
-      width="900px"
-      @ok="handleOk"
-      @cancel="cancel2"
+  <a-form :form="form">
+    <a-form-item
+      :label-col="formItemLayout.labelCol"
+      :wrapper-col="formItemLayout.wrapperCol"
+      label="Name"
     >
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-    </a-modal>
-  </div>
+      <a-input
+        v-decorator="[
+          'username',
+          {rules: [{ required: true, message: 'Please input your name' }]}
+        ]"
+        placeholder="Please input your name"
+      />
+    </a-form-item>
+    <a-form-item
+      :label-col="formItemLayout.labelCol"
+      :wrapper-col="formItemLayout.wrapperCol"
+      label="Nickname"
+    >
+      <a-input
+        v-decorator="[
+          'nickname',
+          {rules: [{ required: checkNick, message: 'Please input your nickname' }]}
+        ]"
+        placeholder="Please input your nickname"
+      />
+    </a-form-item>
+    <a-form-item
+      :label-col="formTailLayout.labelCol"
+      :wrapper-col="formTailLayout.wrapperCol"
+    >
+      <a-checkbox
+        :checked="checkNick"
+        @change="handleChange"
+      >
+        Nickname is required
+      </a-checkbox>
+    </a-form-item>
+    <a-form-item
+      :label-col="formTailLayout.labelCol"
+      :wrapper-col="formTailLayout.wrapperCol"
+    >
+      <a-button
+        type="primary"
+        @click="check"
+      >
+        Check
+      </a-button>
+    </a-form-item>
+  </a-form>
 </template>
+
 <script>
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 8 },
+};
+const formTailLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 8, offset: 4 },
+};
 export default {
-  data() {
+  data () {
     return {
-      visible: false,
-    }
+      checkNick: false,
+      formItemLayout,
+      formTailLayout,
+      form: this.$form.createForm(this),
+    };
   },
   methods: {
-    showModal() {
-      this.visible = true
+    check  () {
+      this.form.validateFields(
+        (err) => {
+          if (!err) {
+            console.info('success');
+          }
+        },
+      );
     },
-    handleOk(e) {
-      console.log(e);
-      this.visible = false
+    handleChange  (e) {
+      this.checkNick = e.target.checked;
+      this.$nextTick(() => {
+        this.form.validateFields(['nickname'], { force: true });
+      });
     },
-    cancel2(){
-      alert(2);
-    }
-  }
-}
+  },
+};
 </script>
