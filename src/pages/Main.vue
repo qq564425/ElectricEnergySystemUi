@@ -24,7 +24,7 @@
       </a-menu>
     </a-layout-sider>
     <a-layout :style="layoutStyle">
-      <a-layout-header :style="{ background: '#fff', padding: 0,position: 'fixed',zIndex: 1,width:'100%' }">
+      <a-layout-header :style="{ background: '#DEE1E6', padding: 0,position: 'fixed',zIndex: 1,width:'100%' }">
         <a-icon
           class="trigger"
           :type="collapsed ? 'menu-unfold' : 'menu-fold'"
@@ -37,7 +37,7 @@
         </div>
       </a-layout-content>
       <a-layout-footer :style="{ textAlign: 'center' }">
-        能源管理系统 ©2018 Created by WWW
+        能源管理系统 ©2019 Created by WWW
       </a-layout-footer>
     </a-layout>
   </a-layout>
