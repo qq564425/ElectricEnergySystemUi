@@ -25,7 +25,7 @@ const router = new Router({
       route('/Role', 'Role', '角色管理'),
       route('/Permission', 'Permission', '权限管理'),
       route('/Menu', 'Menu', '菜单管理'),
-      route('/Test', 'Test', '测试2'),
+      route('/Test', 'Test', '测试333'),
     ])
   ]
 })
