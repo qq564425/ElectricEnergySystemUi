@@ -16,11 +16,11 @@
           v-model="addDeptVisible"
           @ok="deptConfirm"
           @cancel="deptAddCancel">
-            <div slot="title" class="dialog-title">
+            <!-- <div slot="title" class="dialog-title">
                 <a-form :model="deptAddform" :rules="rules" ref="deptAddform" label-position="top">
                     <a-form-item label="上级部门" style="width:60%;margin-left:20%" prop="parentName">
                         <a-input v-model="deptAddform.parentName" v-popover:popoverAddDept readonly>
-                            <!-- <el-button slot="prepend" icon="menu" v-popover:popoverAddDept></el-button> -->
+                            <el-button slot="prepend" icon="menu" v-popover:popoverAddDept></el-button>
                         </a-input>
                     </a-form-item>
 
@@ -32,14 +32,50 @@
                         <a-input v-model.number="deptAddform.order"></a-input>
                     </a-form-item>
                 </a-form>
-            </div>
+            </div> -->
+            <a-form :form="form">
+                <a-form-item
+                style="width:80%;margin-left:12%"
+                label="Name"
+                >
+                <a-input
+                    v-decorator="[
+                    'username',
+                    {rules: [{ required: true, message: 'Please input your name' }]}
+                    ]"
+                    placeholder="Please input your name"
+                />
+                </a-form-item>
+                <a-form-item
+                style="width:80%;margin-left:12%"
+                label="Nickname"
+                >
+                <a-input
+                    v-decorator="[
+                    'nickname',
+                    {rules: [{ required: checkNick, message: 'Please input your nickname' }]}
+                    ]"
+                    placeholder="Please input your nickname"
+                />
+                </a-form-item>
+                <a-form-item
+               
+                >
+                <a-button
+                    type="primary"
+                    @click="check"
+                >
+                    Check
+                </a-button>
+                </a-form-item>
+            </a-form>
         </a-modal >
     </div>
 </template>
 
 <script>
-import {BaseURL} from '../../api/config.js'
-import {mapActions} from 'vuex'
+import {BaseURL} from '../../api/config.js';
+import {mapActions} from 'vuex';
     export default {
         props: ['dialogFormVisible'],
         data() {
@@ -71,6 +107,10 @@ import {mapActions} from 'vuex'
                         {type: 'number', message: '排序必须为数字值'},
                     ],
                 },
+
+
+                checkNick: false,
+                form: this.$form.createForm(this),
             }
         },
 
@@ -188,6 +228,15 @@ import {mapActions} from 'vuex'
             //重置表单
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+            },
+
+
+             check  () {
+                this.form.validateFields((err, values) => {
+                if (!err) {
+                    console.log(values);
+                  }
+               });
             },
         },
 
