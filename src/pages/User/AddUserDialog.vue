@@ -124,7 +124,7 @@ import addDepTree from '../Department/AddDepTree.vue';
                 //添加用户表单
                 userAddform:{
                     dep:'',//部门id
-                    deptname:'',//部门名称
+                    deptname:'',//部门名
                     account:'',//用户名
                     password:'',//密码
                     rpsw:'',//重复密码
