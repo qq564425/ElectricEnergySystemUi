@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-popover
+        <!-- <el-popover
                 ref="popoverAddUser"
                 placement="bottom-start"
                 width="300"
@@ -10,10 +10,10 @@
             <div style="height:600px;overflow:auto">
                 <ul id="userAddtree" class="ztree"></ul>
             </div>
-        </el-popover>
+        </el-popover> -->
 
         <!-- 增加用户 -->
-        <el-dialog 
+        <!-- <el-dialog 
           :visible.sync="addUserVisible" 
           :show-close="false" 
           width="30%"
@@ -31,26 +31,92 @@
                     <el-form-item label="账户" style="width:60%;margin-left:20%" prop="account">
                         <el-input v-model="userAddform.account" placeholder="请输入账户" ></el-input>
                     </el-form-item>
-
-                    <!-- <el-form-item label="密码" style="width:60%;margin-left:20%" prop="password">
-                        <el-input v-model="userAddform.password" type="password" placeholder="请输入密码" ></el-input>
-                    </el-form-item>
-
-                    <el-form-item label="确认密码" style="width:60%;margin-left:20%" prop="rpsw">
-                        <el-input v-model="userAddform.rpsw" type="password" placeholder="请再次输入密码" ></el-input>
-                    </el-form-item> -->
                 </el-form>
             </div>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="userAddCancel">关闭</el-button>
                 <el-button type="primary" @click="userConfirm">保存</el-button>
             </div>
-        </el-dialog>
+        </el-dialog> -->
+
+        <a-modal 
+          title="添加用户"
+          v-model="addUserVisible"
+          @ok="userConfirm"
+          @cancel="userAddCancel">
+            <a-form :form="form">
+                <a-form-item
+                style="width:80%;margin-left:12%"
+                label="所在部门"
+                >
+                    <a-popover
+                        title="部门树"
+                        trigger="click"
+                        v-model="visible"
+                        placement="bottom"
+                    >   
+                        <template slot="content">
+                            <div style="height:300px;width:300px;overflow:auto">
+                                <addDepTree @changeFormValue="changeFormValue" @hide="hide"></addDepTree>
+                            </div> 
+                        </template>
+                        <a @click="hide" slot="content">关闭</a>
+                        <a-input
+                        v-decorator="[
+                        'deptname',
+                        {rules: [{ required: true, message: '请选择用户所在部门' }]}
+                        ]"
+                        placeholder="请选择用户所在部门"
+                        readonly="readonly"
+                    />
+                    </a-popover>
+                </a-form-item>
+
+                <a-form-item
+                style="width:80%;margin-left:12%"
+                label="dep"
+                v-show = "false"
+                >
+                <a-input
+                    v-decorator="[
+                    'dep',
+                    {rules: []}
+                    ]"
+                    placeholder="Please input your nickname"
+                />
+                </a-form-item>
+
+                <a-form-item
+                style="width:80%;margin-left:12%"
+                label="部门名称"
+                >
+                <a-input
+                    v-decorator="[
+                    'account',
+                    {rules: [{ required: true, message: '请输入账号' }]}
+                    ]"
+                    placeholder="请输入账号"
+                />
+                </a-form-item>
+                
+                <a-form-item
+               
+                >
+                <a-button
+                    type="primary"
+                    @click="check"
+                >
+                    Check
+                </a-button>
+                </a-form-item>
+            </a-form>
+        </a-modal >
     </div>
 </template>
 
 <script>
-import {BaseURL} from '../../api/config.js'
+import {BaseURL} from '../../api/config.js';
+import addDepTree from '../Department/AddDepTree.vue';
     export default {
         props: ['dialogFormVisible'],
         data() {
@@ -71,33 +137,21 @@ import {BaseURL} from '../../api/config.js'
                     ],
                     account:[
                         { required: true, message: '必填', trigger: 'blur'},
-                    ],
-                    // password:[
-                    //     { required: true, message: '必填', trigger: 'blur'},
-                    // ],
-                    // rpsw:[
-                    //     { validator: (rule, value, callback) => {
-                    //         if (value === '') {
-                    //             callback(new Error('请再次输入密码'));
-                    //         } else if (value !== this.userAddform.password) {
-                    //             callback(new Error('两次输入密码不一致!'));
-                    //         } else {
-                    //             callback();
-                    //         }
-                    //     }, trigger: 'change' }
-                    // ],
+                    ]
                 },
 
                 //popup可见性
                 addpopvisible: false,
+                form: this.$form.createForm(this),
+                visible: false,
             }
         },
 
         methods: {
             //取消添加用户
             userAddCancel(){
-                this.resetForm('userAddform');
-                this.$emit('closeUserAddDialog', false);
+                this.changeFormValue('','');
+                 this.$emit('closeUserAddDialog', false)
             },
 
             //确认添加用户
@@ -137,6 +191,11 @@ import {BaseURL} from '../../api/config.js'
                         return false;
                     }
                 });
+            },
+
+            //隐藏popover
+            hide () {
+              this.visible = false
             },
 
             //重置表单
@@ -205,6 +264,23 @@ import {BaseURL} from '../../api/config.js'
                         console.log('failed');
                     })
             },
+
+            check  () {
+                this.form.validateFields((err, values) => {
+                if (!err) {
+                    console.log(values);
+                  }
+               });
+            },
+
+            //改变表单值
+            changeFormValue(depname,dep){
+                 this.form.setFieldsValue({
+                    deptname: depname,
+                    dep: dep
+                });
+            }
+            
         },
 
         watch:{
@@ -224,6 +300,10 @@ import {BaseURL} from '../../api/config.js'
 
                 }
             },
+        },
+
+        components: {
+            addDepTree
         }
     }
 

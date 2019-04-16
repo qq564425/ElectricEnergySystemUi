@@ -54,7 +54,9 @@
 
         <AddDepartmentDialog
             :dialogFormVisible="addDepartmentDialogVisible"
-            @closeAddDeptDialog="closeAddDeptDialog">
+            @closeAddDeptDialog="closeAddDeptDialog"
+            @loadData="loadData"
+            @loadTreeData="loadTreeData">
         </AddDepartmentDialog>
 
         <!-- <EditDepartmentDialog
@@ -76,10 +78,10 @@
     scopedSlots: { customRender: 'name' },
     },  
     {
-    title: '排序',
-    dataIndex: 'order',
-    width: '40%',
-    scopedSlots: { customRender: 'order' },
+        title: '排序',
+        dataIndex: 'order',
+        width: '40%',
+        scopedSlots: { customRender: 'order' },
     },
     {
         title: '操作',

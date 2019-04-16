@@ -18,7 +18,7 @@
                         <span style="float:right;padding-right:1%;">
 			  			<!-- <el-button type="success" @click="addUser" size="small"><i class="el-icon-plus"></i>添加</el-button>
     					<el-button type="danger" @click="deleteByGroup" size="small"><i class="el-icon-delete"></i>删除</el-button> -->
-                        <a-button type="primary" size="small">添加</a-button>
+                        <a-button type="primary" size="small" @click="addUser">添加</a-button>
                         <a-button type="danger" size="small" @click="deleteByGroup">删除</a-button>
 			  		</span>
                     </div>
@@ -52,12 +52,12 @@
             </a-col>
         </a-row>
 
-        <!-- <AddUserDialog
+        <AddUserDialog
             :dialogFormVisible="addUserDialogVisible"
             @closeUserAddDialog="closeUserAddDialog">
         </AddUserDialog>
 
-        <UserAddRoleDialog
+        <!-- <UserAddRoleDialog
                 :dialogFormVisible="userAddRolesDialogVisible"
                 @closeUserAddRoleDialog="closeUserAddRoleDialog"
                 :currentItem="currentAddRolesItem">
@@ -72,7 +72,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-    // import AddUserDialog from './User/AddUserDialog.vue'
+     import AddUserDialog from './User/AddUserDialog.vue'
     // import UserAddRoleDialog from './User/UserAddRoleDialog.vue'
     // import UserAddDepartmentDialog from './User/UserAddDepartmentDialog.vue'
     import {BaseURL} from '../api/config.js'
@@ -406,7 +406,7 @@
     //         }
     //     },
         components: {
-            // AddUserDialog,
+             AddUserDialog,
             // UserAddRoleDialog,
             // UserAddDepartmentDialog
         },
