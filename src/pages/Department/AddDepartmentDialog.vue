@@ -11,6 +11,10 @@
             </div>
         </el-popover> -->
 
+         <div style="height:600px;overflow:auto" ref="xx">
+                <ul id="depttree2" class="ztree"></ul>
+            </div>
+
         <a-modal 
           title="添加部门"
           v-model="addDeptVisible"
@@ -36,15 +40,36 @@
             <a-form :form="form">
                 <a-form-item
                 style="width:80%;margin-left:12%"
-                label="Name"
+                label="上级部门"
                 >
-                <a-input
+                <!-- <a-input
                     v-decorator="[
                     'username',
                     {rules: [{ required: true, message: 'Please input your name' }]}
                     ]"
                     placeholder="Please input your name"
-                />
+                /> -->
+                    <a-popover
+                        title="部门树"
+                        trigger="click"
+                        v-model="visible"
+                        placement="bottom"
+                    >   
+                        <template slot="content">
+                            <!-- <div style="height:300px;width:300px;overflow:auto">
+                                <ul id="depttree2" class="ztree"></ul>
+                            </div> -->
+                            <div v-model="this.$refs.xx"></div>
+                        </template>
+                        <a @click="hide" slot="content">关闭</a>
+                        <a-input
+                        v-decorator="[
+                        'user',
+                        {rules: [{ required: true, message: 'Please input your name' }]}
+                        ]"
+                        placeholder="请选择上级部门"
+                    />
+                    </a-popover>
                 </a-form-item>
                 <a-form-item
                 style="width:80%;margin-left:12%"
@@ -111,6 +136,7 @@ import {mapActions} from 'vuex';
 
                 checkNick: false,
                 form: this.$form.createForm(this),
+                visible: false,
             }
         },
 
@@ -238,6 +264,11 @@ import {mapActions} from 'vuex';
                   }
                });
             },
+
+            hide () {
+            console.log(111)
+            this.visible = false
+            },
         },
 
         watch: {
@@ -257,7 +288,7 @@ import {mapActions} from 'vuex';
 
                 }
             }
-        }
+        },
     }
 
     //根据id初始化树形控件
