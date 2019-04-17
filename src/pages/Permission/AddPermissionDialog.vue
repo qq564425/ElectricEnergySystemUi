@@ -1,33 +1,33 @@
 <template>
     <div>
         <a-modal 
-          title="添加用户"
-          v-model="addUserVisible"
-          @ok="userConfirm"
-          @cancel="userAddCancel">
+          title="添加部门"
+          v-model="addPermissionVisible"
+          @ok="permissionConfirm"
+          @cancel="permissionAddCancel">
             <a-form :form="form">
                 <a-form-item
                 style="width:80%;margin-left:12%"
-                label="所在部门"
+                label="上级权限"
                 >
                     <a-popover
-                        title="部门树"
+                        title="权限树"
                         trigger="click"
                         v-model="visible"
                         placement="rightBottom"
                     >   
                         <template slot="content">
                             <div>
-                                <addDepTree @changeFormValue="changeFormValue" @hide="hide"></addDepTree>
+                                <AddPermissionTree @changeFormValue="changeFormValue" @hide="hide"></AddPermissionTree>
                             </div> 
                         </template>
                         <a @click="hide" slot="content">关闭</a>
                         <a-input
                         v-decorator="[
-                        'deptname',
-                        {rules: [{ required: true, message: '请选择用户所在部门' }]}
+                        'parentName',
+                        {rules: [{ required: true, message: '请选择上级权限' }]}
                         ]"
-                        placeholder="请选择用户所在部门"
+                        placeholder="请选择上级权限"
                         readonly="readonly"
                     />
                     </a-popover>
@@ -35,12 +35,12 @@
 
                 <a-form-item
                 style="width:80%;margin-left:12%"
-                label="dep"
+                label="depid"
                 v-show = "false"
                 >
                 <a-input
                     v-decorator="[
-                    'dep',
+                    'parentId',
                     {rules: []}
                     ]"
                     placeholder="Please input your nickname"
@@ -49,29 +49,53 @@
 
                 <a-form-item
                 style="width:80%;margin-left:12%"
-                label="password"
-                v-show = "false"
+                label="权限key"
                 >
                 <a-input
                     v-decorator="[
-                    'password',
-                    {rules: []}
+                    'key',
+                    {rules: [{ required: true, message: '请输入权限key' }]}
                     ]"
-                    placeholder="Please input your nickname"
+                    placeholder="请输入权限key"
+                />
+                </a-form-item>
+                
+                <a-form-item
+                style="width:80%;margin-left:12%"
+                label="权限名称"
+                >
+                <a-input
+                    v-decorator="[
+                    'name',
+                    {rules: [{ required: true, message: '请输入权限名称' }]}
+                    ]"
+                    placeholder="请输入权限名称"
                 />
                 </a-form-item>
 
                 <a-form-item
                 style="width:80%;margin-left:12%"
-                label="部门名称"
+                label="排序"
                 >
                 <a-input
                     v-decorator="[
-                    'account',
-                    {rules: [{ required: true, message: '请输入账号' }]}
+                    'order',
+                    {rules: [{ required: true, message: '请输入排序' }]}
                     ]"
-                    placeholder="请输入账号"
+                    placeholder="请输入排序"
                 />
+                </a-form-item>
+
+                
+                <a-form-item
+               
+                >
+                <a-button
+                    type="primary"
+                    @click="check"
+                >
+                    Check
+                </a-button>
                 </a-form-item>
             </a-form>
         </a-modal >
@@ -79,45 +103,45 @@
 </template>
 
 <script>
-import {BaseURL} from '../../api/config.js';
-import addDepTree from '../Department/AddDepTree.vue';
+import {BaseURL} from '../../api/config';
+import AddPermissionTree from '../Permission/AddPermissionTree.vue';
     export default {
         props: ['dialogFormVisible'],
         data() {
             return {
-                //popup可见性
-                addpopvisible: false,
                 form: this.$form.createForm(this),
                 visible: false,
             }
         },
 
         methods: {
-            //取消添加用户
-            userAddCancel(){
-                this.changeFormValue('','','');
-                 this.$emit('closeUserAddDialog', false)
+            //取消添加权限
+            permissionAddCancel(){
+                this.$emit('closeAddPermissionDialog', false);
+                this.changeFormValue('','','','');
             },
 
-            //确认添加用户
-            userConfirm(){
+            //确认添加权限
+            permissionConfirm(){
                 let that = this;
                 this.form.validateFields((err, values) => {
-                values.dep = parseInt(values.dep);
+                values.parentId = parseInt(values.parentId);
+                values.order = parseInt(values.order);
                 if (!err) {
                     that.$ajax.post
                         (
-                            `${BaseURL}/user/create`,
+                            `${BaseURL}/main/permission/create`,
                             that.$qs.stringify(values)
                         )
                         .then(function(res){
                             if(res.data.ok){
                               that.$message.success(res.data.msg);
                               that.$emit('reLoadData');
+                              that.$emit('loadTreeData');
                             }else{
                               that.$message.warning(res.data.msg);
                             }
-                            that.userAddCancel();
+                            that.permissionAddCancel();
                         },function(){
                             console.log('failed');
                         });
@@ -131,27 +155,36 @@ import addDepTree from '../Department/AddDepTree.vue';
             },
 
             //改变表单值
-            changeFormValue(depname,dep,account){
+            changeFormValue(parentName,parentId,order,name,key){
                  this.form.setFieldsValue({
-                    deptname: depname,
-                    dep: dep,
-                    password:  '000000',
-                    account: account
+                    parentName: parentName,
+                    parentId: parentId,
+                    order: order,
+                    name: name,
+                    key: key
                 });
-            }
-            
+            },
+
+            check  () {
+                this.form.validateFields((err, values) => {
+                if (!err) {
+                    console.log(values);
+                  }
+               });
+            },
         },
 
-        watch:{
-            // addUserVisible: function(newval, oldval){
+        watch: {
+            // addPermissionVisible: function (newval, oldval) {
             //     if(newval){
-            //         this.loadAddDeptTreeData();
+            //         this.loadAddTree();
+            //         this.loadMenuTree();
             //     }
             // }
         },
 
         computed: {
-            addUserVisible: {
+            addPermissionVisible: {
                 get: function () {
                     return this.dialogFormVisible;
                 },
@@ -162,11 +195,10 @@ import addDepTree from '../Department/AddDepTree.vue';
         },
 
         components: {
-            addDepTree
+            AddPermissionTree
         }
     }
 
-    //根据id初始化树形控件
     function initializeTree(TemplateId, setting, treeData){
         $.fn.zTree.init($("#" + TemplateId), setting, treeData);
     }

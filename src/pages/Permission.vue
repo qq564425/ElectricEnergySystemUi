@@ -15,12 +15,25 @@
                 <div style="box-shadow: 2px 2px 5px #888888;background-color:#FFFFFF">
                     <div style="background-color:#5CACEE;padding:5px;overflow:hidden;height:30px">
                         <span style="font-size:1.2em;float:left;color:#FFFFFF">权限设置</span>
+                        <span style="float:right;padding-right:1%;">
+                        <a-button type="primary" size="small" @click="addPermission" >添加</a-button>
+                        <a-button type="danger" size="small" @click="deleteByGroup">删除</a-button>
+                        </span>
                     </div>
 
                     <a-table :columns="columns" 
                     :dataSource="tableData"
-                    :pagination="false" 
-                    bordered>    
+                    :pagination="false"
+                    :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" 
+                    bordered> 
+                        <template slot="operation" slot-scope="text, record">
+                            <a-popconfirm
+                            v-if="tableData.length"
+                            title="确定删除?"
+                            @confirm="() => onDelete(record)">
+                            <a href="javascript:;">删除</a>
+                            </a-popconfirm>
+                        </template>       
                     </a-table>
 
                     <div align="center" style="margin-top:2px;">
@@ -37,32 +50,46 @@
                 </div>
             </a-col>
         </a-row>
+
+        <AddPermissionDialog
+            :dialogFormVisible="addPermissionDialogVisible"
+            @closeAddPermissionDialog="closeAddPermissionDialog"
+            @reLoadData="reLoadData"
+            @loadTreeData="loadTreeData">
+        </AddPermissionDialog>
     </div>
 </template>
 
 <script>
     import {BaseURL} from '../api/config.js';
+    import AddPermissionDialog from './Permission/AddPermissionDialog.vue';
     const columns = [{
     title: '权限名称',
     dataIndex: 'name',
-    width: '25%',
+    width: '20%',
     scopedSlots: { customRender: 'name' },
     }, {
     title: '权限key',
-    dataIndex: 'key',
-    width: '15%',
-    scopedSlots: { customRender: 'key' },
+    dataIndex: 'keyName',
+    width: '30%',
+    scopedSlots: { customRender: 'keyName' },
     }, {
     title: '排序',
     dataIndex: 'order',
-    width: '25%',
+    width: '30%',
     scopedSlots: { customRender: 'url' },
+    },{
+        title: '操作',
+        dataIndex: 'operation',
+         width: '40%',
+        scopedSlots: { customRender: 'operation' },
     }];
     export default({
         data()
         {
             return {
                 columns,
+                selectedRowKeys: [],
                 //表格数据
                 tableData: [],
 
@@ -79,7 +106,9 @@
                 totalNum: 0,
 
                 //每页数据量
-                pageSize: 10
+                pageSize: 10,
+
+                addPermissionDialogVisible: false,
             }
         },
 
@@ -105,21 +134,12 @@
                     `${BaseURL}/main/get-show-permissions?` + 'order=' + order + '&limit=' + limit + '&offset=' + offset + '&id=' + id
                 ).then(function(res)
                     {
-                        if(res.data.msg == 'Login Required'){
-                             that.changeShowNaviPage(false);
-                            that.$confirm('您的账号登录过期或已在别处登录，请重新登录！', '提示', {
-                            confirmButtonText: '确定',
-                            cancelButtonText: '取消',
-                            type: 'warning'
-                            }).then(() => {
-                            
-                            }).catch(() => {
-                                        
-                            });
-                            return;
-                          }
                         that.totalNum=clickTreeNode == 'clickTreeNode'?res.data.total+1:res.data.total;
                         that.tableData = res.data.rows;
+                         for (let i = 0; i < that.tableData.length; i++) {
+                            that.tableData[i].keyName = that.tableData[i].key;
+                            that.tableData[i].key = that.tableData[i].id;
+                        }
                     },
                     function(){
                         console.log('failed');
@@ -161,6 +181,85 @@
                 this.loadData(this.pageSize, (this.currentPage - 1) * this.pageSize, 'asc', this.currentTreeNodeId,'clickTreeNode');
             },
 
+            onSelectChange (selectedRowKeys) {
+                console.log('selectedRowKeys changed: ', selectedRowKeys);
+                this.selectedRowKeys = selectedRowKeys
+            },
+
+             //确定删除
+            onDelete(row){
+              let deleteArray = [];
+              deleteArray.push(row.id);
+              this.deletePermissions(deleteArray);
+            },
+
+            //批量删除按钮响应
+            deleteByGroup(){
+                var that = this;
+                if(this.selectedRowKeys.length == 0)
+                {
+                    this.$message.warning('请选择你要删除的权限！');
+                    return;
+                }
+                this.$confirm({
+                    title: '确定删除选中的' + this.selectedRowKeys.length + '个权限?',
+                    okText: 'Yes',
+                    okType: 'danger',
+                    cancelText: 'No',
+                    onOk() {
+                      that.deletePermissions(that.selectedRowKeys);
+                    },
+                    onCancel() {
+                      console.log('Cancel');
+                    },
+                });
+            },
+
+            //删除权限
+            deletePermissions(array){
+                let that = this;
+                that.$ajax.post
+                (
+                    `${BaseURL}/main/permission/del`,
+                    {"permIdStr": array}
+                ).then(function(res)
+                {
+                    if(res.data.ok){
+                       that.$message.success(res.data.msg);
+                       that.selectedRowKeys = [];
+                    }else{
+                       that.$message.warning(res.data.msg);
+                    }
+                    that.loadTreeData();
+                    if(that.tableData.length==1)
+                    {
+                        that.currentTreeNodeId = 0;
+                        that.currentPage = 1;
+                    }
+                    that.loadData(that.pageSize, (that.currentPage - 1) * that.pageSize, 'asc', that.currentTreeNodeId);
+                },function(){
+                    console.log('failed');
+                });
+            },
+
+             //添加权限按钮响应
+            addPermission(){
+                this.addPermissionDialogVisible = true;
+            },
+
+            //关闭添加权限对话框
+            closeAddPermissionDialog(refreshFlag){
+                this.addPermissionDialogVisible = false;
+                if(refreshFlag){
+                    this.loadData(this.pageSize, (this.currentPage - 1) * this.pageSize, 'asc', this.currentTreeNodeId);
+                    this.loadTreeData();
+                }
+            },
+
+            reLoadData(){
+                this.loadData(this.pageSize, (this.currentPage - 1) * this.pageSize, 'asc', this.currentTreeNodeId);
+            }
+
         },
 
         mounted(){
@@ -178,6 +277,10 @@
                     this.loadTreeData();
                 }
             }
+        },
+
+        components: {
+            AddPermissionDialog
         }
 
     });

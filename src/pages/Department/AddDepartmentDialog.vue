@@ -14,10 +14,10 @@
                         title="部门树"
                         trigger="click"
                         v-model="visible"
-                        placement="bottom"
+                        placement="rightBottom"
                     >   
                         <template slot="content">
-                            <div style="height:300px;width:300px;overflow:auto">
+                            <div>
                                 <addTree @changeFormValue="changeFormValue" @hide="hide"></addTree>
                             </div> 
                         </template>
@@ -123,7 +123,7 @@ import addTree from './AddDepTree.vue';
                         .then(function(res){
                             if(res.data.ok){
                               that.$message.success(res.data.msg);
-                              that.$emit('loadData');
+                              that.$emit('reLoadData');
                               that.$emit('loadTreeData');
                             }else{
                               that.$message.warning(res.data.msg);
@@ -148,6 +148,7 @@ import addTree from './AddDepTree.vue';
             hide () {
               this.visible = false
             },
+
             //改变表单值
             changeFormValue(depname,depid,order,name){
                  this.form.setFieldsValue({

@@ -8,7 +8,7 @@
                         <span style="float:right;padding-right:1%;">
 			  			<!-- <el-button type="success" @click="addRole" size="small"><i class="el-icon-plus"></i>添加</el-button>
     					<el-button type="danger" @click="deleteByGroup" size="small"><i class="el-icon-delete"></i>删除</el-button> -->
-                        <a-button type="primary" size="small">添加</a-button>
+                        <a-button type="primary" size="small" @click="addRole">添加</a-button>
                         <a-button type="danger" size="small" @click="deleteByGroup">删除</a-button>
 			  		</span>
                     </div>
@@ -42,12 +42,13 @@
             </a-col>
         </a-row>
 
-        <!-- <AddRoleDialog
+        <AddRoleDialog
             :dialogFormVisible="addRoleDialogVisible"
-            @closeAddRoleDialog="closeAddRoleDialog">
+            @closeAddRoleDialog="closeAddRoleDialog"
+            @reLoadData="reLoadData">
         </AddRoleDialog>
 
-        <EditRoleDialog
+        <!-- <EditRoleDialog
                 :dialogFormVisible="editRoleDialogVisible"
                 :currentItem="currentEditItem"
                 @closeEditRoleDialog="closeEditRoleDialog">
@@ -68,7 +69,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-    // import AddRoleDialog from './Role/AddRoleDialog.vue'
+     import AddRoleDialog from './Role/AddRoleDialog.vue'
     // import EditRoleDialog from './Role/EditRoleDialog.vue'
     // import CheckRoleDialog from './Role/CheckRoleDialog.vue'
     // import RoleGrantDialog from './Role/RoleGrantDialog.vue'
@@ -271,6 +272,11 @@
             onSelectChange (selectedRowKeys) {
                 console.log('selectedRowKeys changed: ', selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys
+            },
+
+            //刷新表格
+            reLoadData(){
+                this.loadData(this.pageSize, (this.currentPage - 1) * this.pageSize, 'asc');
             }
 
         },
@@ -284,7 +290,7 @@
         },
 
         components: {
-            // AddRoleDialog,
+             AddRoleDialog,
             // EditRoleDialog,
             // CheckRoleDialog,
             // RoleGrantDialog

@@ -24,12 +24,14 @@
       </a-menu>
     </a-layout-sider>
     <a-layout :style="layoutStyle">
-      <a-layout-header :style="{ background: '#DEE1E6', padding: 0,position: 'fixed',zIndex: 1,width:'100%' }">
+      <a-layout-header :style="{ background: '#334454', padding: 0,position: 'fixed',zIndex: 1,width:'100%' }">
+       <font color="#fff">
         <a-icon
           class="trigger"
           :type="collapsed ? 'menu-unfold' : 'menu-fold'"
           @click="()=> collapsed = !collapsed"
         />
+      </font> 
       </a-layout-header>
       <a-layout-content :style="{ margin: '24px 16px 0', overflow: 'initial',marginTop:'5%'}">
         <div :style="{ padding: '24px', background: '#fff', textAlign: 'center' }">

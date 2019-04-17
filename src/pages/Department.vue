@@ -28,12 +28,17 @@
                       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                        bordered>
                         <template slot="operation" slot-scope="text, record">
+                        <span>
+                            <a href="javascript:;" @click="onEdit"><a-icon type="edit" />编辑</a>
+                        </span>
+                        <span style="margin-left:10px">
                             <a-popconfirm
                             v-if="tableData.length"
                             title="确定删除?"
                             @confirm="() => onDelete(record)">
-                            <a href="javascript:;">删除</a>
+                            <a href="javascript:;"><font color="red"><a-icon type="delete" />删除</font></a>
                             </a-popconfirm>
+                        </span>
                         </template>    
                     </a-table>
 
@@ -55,7 +60,7 @@
         <AddDepartmentDialog
             :dialogFormVisible="addDepartmentDialogVisible"
             @closeAddDeptDialog="closeAddDeptDialog"
-            @loadData="loadData"
+            @reLoadData="reLoadData"
             @loadTreeData="loadTreeData">
         </AddDepartmentDialog>
 
@@ -228,9 +233,8 @@
               this.deleteDepts(deleteArray);
             },
 
-            //重置表单
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
+            onEdit(){
+               alert(1);
             },
 
             //删除部门
@@ -285,6 +289,11 @@
             onSelectChange (selectedRowKeys) {
                 console.log('selectedRowKeys changed: ', selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys
+            },
+
+            //刷新表格
+            reLoadData(){
+                this.loadData(this.pageSize, (this.currentPage - 1) * this.pageSize, 'asc', this.currentTreeNodeId);
             }
         },
 

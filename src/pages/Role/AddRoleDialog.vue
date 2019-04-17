@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog 
+        <!-- <el-dialog 
           :visible.sync="addRoleVisible" 
           :show-close="false" 
           width="30%"
@@ -21,7 +21,52 @@
                 <el-button @click="roleAddCancel">取 消</el-button>
                 <el-button type="primary" @click="roleAddConfirm">确 定</el-button>
             </div>
-        </el-dialog>
+        </el-dialog> -->
+        <a-modal 
+          title="添加角色"
+          v-model="addRoleVisible"
+          @ok="roleAddConfirm"
+          @cancel="roleAddCancel">
+            <a-form :form="form">
+                <a-form-item
+                style="width:80%;margin-left:12%"
+                label="角色键值"
+                >
+                <a-input
+                    v-decorator="[
+                    'key',
+                    {rules: [{ required: true, message: '请输入角色键值' }]}
+                    ]"
+                    placeholder="请输入角色键值"
+                />
+                </a-form-item>
+                
+                <a-form-item
+                style="width:80%;margin-left:12%"
+                label="角色名"
+                >
+                <a-input
+                    v-decorator="[
+                    'name',
+                    {rules: [{ required: true, message: '请输入角色名' }]}
+                    ]"
+                    placeholder="请输入角色名"
+                />
+                </a-form-item>
+
+                
+                <a-form-item
+               
+                >
+                <a-button
+                    type="primary"
+                    @click="check"
+                >
+                    Check
+                </a-button>
+                </a-form-item>
+            </a-form>
+        </a-modal >
     </div>
 </template>
 
@@ -31,23 +76,7 @@ import {BaseURL} from '../../api/config'
         props: ['dialogFormVisible'],
         data() {
             return {
-
-                //角色添加表单
-                roleAddform: {
-                    id:'',
-                    name:'',
-                    key:'',
-                },
-
-                //表单验证规则
-                rules: {
-                    name: [
-                        { required: true, message: '请输入角色名称', trigger: 'change' },
-                    ],
-                    key: [
-                        { required: true, message: '请输入角色键值', trigger: 'change' },
-                    ],
-                },
+               form: this.$form.createForm(this),
             }
         },
 
@@ -56,51 +85,83 @@ import {BaseURL} from '../../api/config'
             //取消添加角色
             roleAddCancel(){
                 this.$emit('closeAddRoleDialog', false)
-                this.resetForm('roleAddform');
+                this.changeFormValue('','');
             },
 
             //确认添加角色
             roleAddConfirm(){
+                // let that = this;
+                // this.$refs['roleAddform'].validate((valid) => {
+                //     if (valid) {
+                //         that.$ajax.post
+                //         (
+                //             `${BaseURL}/main/role/create`,
+                //             that.$qs.stringify(this.roleAddform)
+                //         )
+                //         .then(function(res){
+                //             if(res.data.msg == 'Login Required'){
+                //                 that.changeShowNaviPage(false);
+                //                 that.$confirm('您的账号登录过期或已在别处登录，请重新登录！', '提示', {
+                //                 confirmButtonText: '确定',
+                //                 cancelButtonText: '取消',
+                //                 type: 'warning'
+                //                 }).then(() => {
+                                
+                //                 }).catch(() => {
+                                            
+                //                 });
+                //                 return;
+                //              }
+                //             that.$message('创建角色成功');
+                //             that.resetForm('roleAddform');
+                //             that.$emit('closeAddRoleDialog', true)
+                //         },function(){
+                //             console.log('failed');
+                //             that.resetForm('roleAddform');
+                //         });
+                //     } else {
+                //         console.log('error submit!!');
+                //         return false;
+                //     }
+                // });
                 let that = this;
-                this.$refs['roleAddform'].validate((valid) => {
-                    if (valid) {
-                        that.$ajax.post
+                this.form.validateFields((err, values) => {
+                if (!err) {
+                    that.$ajax.post
                         (
                             `${BaseURL}/main/role/create`,
-                            that.$qs.stringify(this.roleAddform)
+                            that.$qs.stringify(values)
                         )
                         .then(function(res){
-                            if(res.data.msg == 'Login Required'){
-                                that.changeShowNaviPage(false);
-                                that.$confirm('您的账号登录过期或已在别处登录，请重新登录！', '提示', {
-                                confirmButtonText: '确定',
-                                cancelButtonText: '取消',
-                                type: 'warning'
-                                }).then(() => {
-                                
-                                }).catch(() => {
-                                            
-                                });
-                                return;
-                             }
-                            that.$message('创建角色成功');
-                            that.resetForm('roleAddform');
-                            that.$emit('closeAddRoleDialog', true)
+                            if(res.data.ok){
+                              that.$message.success(res.data.msg);
+                              that.$emit('reLoadData');
+                            }else{
+                              that.$message.warning(res.data.msg);
+                            }
+                            that.roleAddCancel();
                         },function(){
                             console.log('failed');
-                            that.resetForm('roleAddform');
                         });
-                    } else {
-                        console.log('error submit!!');
-                        return false;
-                    }
-                });
+                  }
+               });
             },
 
-            //重置表单
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
+             check  () {
+                this.form.validateFields((err, values) => {
+                if (!err) {
+                    console.log(values);
+                  }
+               });
             },
+
+            //改变表单值
+            changeFormValue(key,name){
+                 this.form.setFieldsValue({
+                    key: key,
+                    name: name
+                });
+            }
         },
 
         computed: {

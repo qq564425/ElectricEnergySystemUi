@@ -54,7 +54,8 @@
 
         <AddUserDialog
             :dialogFormVisible="addUserDialogVisible"
-            @closeUserAddDialog="closeUserAddDialog">
+            @closeUserAddDialog="closeUserAddDialog"
+            @reLoadData="reLoadData">
         </AddUserDialog>
 
         <!-- <UserAddRoleDialog
@@ -379,8 +380,12 @@
             onSelectChange (selectedRowKeys) {
                 console.log('selectedRowKeys changed: ', selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys
-            }
+            },
 
+            //刷新表格
+            reLoadData(){
+                 this.loadData(this.pageSize, (this.currentPage - 1) * this.pageSize, 'asc', this.currentTreeNodeId);
+            }
         },
 
         mounted(){
