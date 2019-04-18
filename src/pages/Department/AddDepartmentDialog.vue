@@ -18,7 +18,7 @@
                     >   
                         <template slot="content">
                             <div>
-                                <addTree @changeFormValue="changeFormValue" @hide="hide"></addTree>
+                                <addTree @changeFormValue="changeFormValue" @hide="hide" :showTree="showTree"></addTree>
                             </div> 
                         </template>
                         <a @click="hide" slot="content">关闭</a>
@@ -98,6 +98,7 @@ import addTree from './AddDepTree.vue';
             return {
                 form: this.$form.createForm(this),
                 visible: false,
+                showTree: 'edit'
             }
         },
 
@@ -161,11 +162,11 @@ import addTree from './AddDepTree.vue';
         },
 
         watch: {
-            // addDeptVisible: function (newval, oldval) {
-            //     if(newval){
-            //         this.loadAddTree();
-            //     }
-            // }
+            addDeptVisible: function (newval, oldval) {
+                // if(newval){
+                //     this.showTree = newval;
+                // }
+            }
         },
 
         computed: {

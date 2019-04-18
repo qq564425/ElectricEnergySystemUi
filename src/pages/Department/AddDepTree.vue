@@ -7,6 +7,7 @@
 <script>
 import {BaseURL} from '../../api/config.js';
 export default {
+   props: ['showTree'],
    data() {
      return {
         checkNick: false,
@@ -73,6 +74,17 @@ export default {
                 this.$emit('changeFormValue',treeNode.name,treeNode.id);
                 this.$emit('hide');
             },
+
+            watch: {
+                showTree(newval,oldval){
+                    alert(newval);
+                   if(newval == 'add'){
+                      this.loadAddTree();
+                   }else if(newval == 'edit'){
+                      this.loadAddTree();
+                   }
+                }
+            }
    },
 
    mounted() {
