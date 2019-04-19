@@ -16,9 +16,7 @@
                     <div style="background-color:#5CACEE;padding:5px;overflow:hidden;height:30px">
                         <span style="font-size:1.2em;float:left;color:#FFFFFF">部门管理</span>
                         <span style="float:right;padding-right:1%;">
-			  			<!-- <el-button type="success" @click="addDepartment" size="small"><i class="el-icon-plus"></i>添加</el-button> -->
                           <a-button type="primary" size="small" @click="addDepartment">添加</a-button>
-    					<!-- <el-button type="danger" @click="deleteByGroup" size="small"><i class="el-icon-delete"></i>删除</el-button> -->
                         <a-button type="danger" size="small" @click="deleteByGroup">删除</a-button>
 			  		</span>
                     </div>
@@ -27,9 +25,9 @@
                       :pagination="false"
                       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                        bordered>
-                        <template slot="operation" slot-scope="text, record">
+                        <template slot="operation" slot-scope="text, record, index">
                         <span>
-                            <a href="javascript:;" @click="onEdit"><a-icon type="edit" />编辑</a>
+                            <a href="javascript:;" @click="onEdit(record)"><a-icon type="edit" />编辑</a>
                         </span>
                         <span style="margin-left:10px">
                             <a-popconfirm
@@ -64,17 +62,19 @@
             @loadTreeData="loadTreeData">
         </AddDepartmentDialog>
 
-        <!-- <EditDepartmentDialog
+        <EditDepartmentDialog
             :dialogFormVisible="editDepartmentDialogVisible"
             @closeEditDeptDialog="closeEditDeptDialog"
-            :currentItem="currentEditItem">
-        </EditDepartmentDialog> -->
+            :currentItem="currentEditItem"
+            @reLoadData="reLoadData"
+            @loadTreeData="loadTreeData">
+        </EditDepartmentDialog>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
-     import AddDepartmentDialog from './Department/AddDepartmentDialog.vue';
-    // import EditDepartmentDialog from './Department/EditDepartmentDialog.vue';
+    import AddDepartmentDialog from './Department/AddDepartmentDialog.vue';
+    import EditDepartmentDialog from './Department/EditDepartmentDialog.vue';
     import {BaseURL} from '../api/config.js';
     const columns = [{
     title: '部门名称',
@@ -157,12 +157,6 @@
                 }
             },
 
-            //编辑按钮响应
-            handleEdit(index, row){
-                this.currentEditItem = row;
-                this.editDepartmentDialogVisible = true;
-            },
-
             //关闭编辑部门对话框
             closeEditDeptDialog(refreshFlag){
                 this.editDepartmentDialogVisible = false;
@@ -182,6 +176,7 @@
                 ).then(function(res)
                     {
                         that.totalNum=clickTreeNode == 'clickTreeNode'?res.data.total+1:res.data.total;
+                        console.log("两死神",res.data.rows);
                         that.tableData = res.data.rows;
                         for (let i = 0; i < that.tableData.length; i++) {
                             that.tableData[i].key = that.tableData[i].id;
@@ -294,6 +289,11 @@
             //刷新表格
             reLoadData(){
                 this.loadData(this.pageSize, (this.currentPage - 1) * this.pageSize, 'asc', this.currentTreeNodeId);
+            },
+
+            onEdit(row){
+               this.currentEditItem = row;
+               this.editDepartmentDialogVisible = true;
             }
         },
 
@@ -317,7 +317,7 @@
 
         components: {
              AddDepartmentDialog,
-            // EditDepartmentDialog
+             EditDepartmentDialog
         },
 
         watch: {
