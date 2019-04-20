@@ -16,8 +16,6 @@
                     <div style="background-color:#5CACEE;padding:5px;overflow:hidden;height:30px">
                         <span style="font-size:1.2em;float:left;color:#FFFFFF">用户管理</span>
                         <span style="float:right;padding-right:1%;">
-			  			<!-- <el-button type="success" @click="addUser" size="small"><i class="el-icon-plus"></i>添加</el-button>
-    					<el-button type="danger" @click="deleteByGroup" size="small"><i class="el-icon-delete"></i>删除</el-button> -->
                         <a-button type="primary" size="small" @click="addUser">添加</a-button>
                         <a-button type="danger" size="small" @click="deleteByGroup">删除</a-button>
 			  		</span>
@@ -28,12 +26,28 @@
                       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                        bordered>
                         <template slot="operation" slot-scope="text, record">
-                            <a-popconfirm
-                            v-if="tableData.length"
-                            title="确定删除?"
-                            @confirm="() => onDelete(record)">
-                            <a href="javascript:;">删除</a>
-                            </a-popconfirm>
+                            <span>
+                              <a href="javascript:;" @click="distribution(record)"><a-icon type="edit" />分配部门</a>
+                            </span>
+                            <span style="margin-left:10px">
+                              <a href="javascript:;" @click="assignRoles(record)"><a-icon type="form" />分配角色</a>
+                            </span>
+                            <span style="margin-left:10px">
+                                <a-popconfirm
+                                v-if="tableData.length"
+                                title="确定初始化该用户密码?"
+                                @confirm="() => restPassword(record)">
+                                <a href="javascript:;"><font><a-icon type="redo" />密码初始化</font></a>
+                                </a-popconfirm>
+                            </span>
+                            <span style="margin-left:10px">
+                                <a-popconfirm
+                                v-if="tableData.length"
+                                title="确定删除?"
+                                @confirm="() => onDelete(record)">
+                                <a href="javascript:;"><font color="red"><a-icon type="delete" />删除</font></a>
+                                </a-popconfirm>
+                            </span>
                         </template>    
                     </a-table>
 
@@ -58,24 +72,26 @@
             @reLoadData="reLoadData">
         </AddUserDialog>
 
-        <!-- <UserAddRoleDialog
+        <UserAddRoleDialog
                 :dialogFormVisible="userAddRolesDialogVisible"
                 @closeUserAddRoleDialog="closeUserAddRoleDialog"
-                :currentItem="currentAddRolesItem">
+                :currentItem="currentAddRolesItem"
+                @reLoadData="reLoadData">
         </UserAddRoleDialog>
 
         <UserAddDepartmentDialog
                 :dialogFormVisible="userAddDepartmentDialogVisible"
                 @closeUserAddDepartmentDialog="closeUserAddDepartmentDialog"
-                :currentItem="currentAddDepartmentItem">
-        </UserAddDepartmentDialog> -->
+                :currentItem="currentAddDepartmentItem"
+                @reLoadData="reLoadData">
+        </UserAddDepartmentDialog> 
     </div>
 </template>
 
 <script type="text/ecmascript-6">
-     import AddUserDialog from './User/AddUserDialog.vue'
-    // import UserAddRoleDialog from './User/UserAddRoleDialog.vue'
-    // import UserAddDepartmentDialog from './User/UserAddDepartmentDialog.vue'
+    import AddUserDialog from './User/AddUserDialog.vue'
+    import UserAddRoleDialog from './User/UserAddRoleDialog.vue'
+    import UserAddDepartmentDialog from './User/UserAddDepartmentDialog.vue'
     import {BaseURL} from '../api/config.js'
     const columns = [{
         title: '账号',
@@ -86,13 +102,13 @@
     {
         title: '部门名称',
         dataIndex: 'dep_name',
-        width: '30%',
+        width: '20%',
         scopedSlots: { customRender: 'dep_name' },
     },
      {
         title: '角色名称',
         dataIndex: 'roleNames',
-        width: '30%',
+        width: '20%',
         scopedSlots: { customRender: 'roleNames' },
     },
     {
@@ -236,7 +252,8 @@
             },
 
             //分配角色按钮响应
-            assignRoles(index, row){
+            assignRoles(row){
+                console.log('sss',row);
                 this.currentAddRolesItem = row;
                 this.userAddRolesDialogVisible = true;
             },
@@ -251,7 +268,7 @@
             },
 
             //分配部门按钮响应
-            distribution(index, row){
+            distribution(row){
                 console.log(row)
                 this.currentAddDepartmentItem = row;
                 this.userAddDepartmentDialogVisible = true;
@@ -285,20 +302,6 @@
               let deleteArray = [];
               deleteArray.push(row.id);
               this.deleteUsers(deleteArray);
-            },
-
-            //初始化密码确认
-            restPassword(index, row){
-                let that = this;
-                this.$confirm('确认将'+row.account+'用户密码初始化？', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.restPasswordAjax({account:row.account,password:'000000'});
-                }).catch(() => {
-
-                });
             },
 
             //删除
@@ -347,7 +350,8 @@
             },
 
             //初始用户密码
-            restPasswordAjax(userInfo){
+            restPassword(row){
+                let userInfo = {account:row.account,password:'000000'};
                 let that = this;
                         this.$ajax.post
                         (
@@ -355,22 +359,10 @@
                             that.$qs.stringify(userInfo)
                         )
                             .then(function(res){
-                                if(res.data.msg == 'Login Required'){
-                                    that.changeShowNaviPage(false);
-                                    that.$confirm('您的账号登录过期或已在别处登录，请重新登录！', '提示', {
-                                    confirmButtonText: '确定',
-                                    cancelButtonText: '取消',
-                                    type: 'warning'
-                                    }).then(() => {
-                                    
-                                    }).catch(() => {
-                                                
-                                    });
-                                    return
-                                 }else if(res.data.msg=='success'){
-                                     that.$message('初始化用户密码成功！');
+                                 if(res.data.msg=='success'){
+                                     that.$message.success('初始化用户密码成功！');
                                  }else{
-                                     that.$message('初始化用户密码失败！');
+                                     that.$message.warning('初始化用户密码失败！');
                                  }
                             },function(){
                                 console.log('failed');
@@ -412,8 +404,8 @@
     //     },
         components: {
              AddUserDialog,
-            // UserAddRoleDialog,
-            // UserAddDepartmentDialog
+             UserAddRoleDialog,
+             UserAddDepartmentDialog
         },
 
         watch: {

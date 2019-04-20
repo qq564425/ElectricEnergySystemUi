@@ -6,8 +6,6 @@
                     <div style="background-color:#5CACEE;padding:5px;overflow:hidden;height:30px">
                         <span style="font-size:1.2em;float:left;color:#FFFFFF">角色设置</span>
                         <span style="float:right;padding-right:1%;">
-			  			<!-- <el-button type="success" @click="addRole" size="small"><i class="el-icon-plus"></i>添加</el-button>
-    					<el-button type="danger" @click="deleteByGroup" size="small"><i class="el-icon-delete"></i>删除</el-button> -->
                         <a-button type="primary" size="small" @click="addRole">添加</a-button>
                         <a-button type="danger" size="small" @click="deleteByGroup">删除</a-button>
 			  		</span>
@@ -18,12 +16,20 @@
                       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                        bordered>
                         <template slot="operation" slot-scope="text, record">
-                            <a-popconfirm
-                            v-if="tableData.length"
-                            title="确定删除?"
-                            @confirm="() => onDelete(record)">
-                            <a href="javascript:;">删除</a>
-                            </a-popconfirm>
+                            <span>
+                               <a href="javascript:;" @click="handleCheck(record)"><a-icon type="search" />查看</a>
+                            </span>
+                            <span style="margin-left:10px">
+                               <a href="javascript:;" @click="onEdit(record)"><a-icon type="edit" />编辑</a>
+                            </span>
+                            <span style="margin-left:10px">
+                                <a-popconfirm
+                                v-if="tableData.length"
+                                title="确定删除?"
+                                @confirm="() => onDelete(record)">
+                                <a href="javascript:;"><font color="red"><a-icon type="delete" />删除</font></a>
+                                </a-popconfirm>
+                            </span>
                         </template>    
                     </a-table>
 
@@ -48,10 +54,11 @@
             @reLoadData="reLoadData">
         </AddRoleDialog>
 
-        <!-- <EditRoleDialog
+         <EditRoleDialog
                 :dialogFormVisible="editRoleDialogVisible"
                 :currentItem="currentEditItem"
-                @closeEditRoleDialog="closeEditRoleDialog">
+                @closeEditRoleDialog="closeEditRoleDialog"
+                @reLoadData="reLoadData">
         </EditRoleDialog>
 
         <CheckRoleDialog
@@ -60,7 +67,7 @@
                 @closeCheckRoleDialog="closeCheckRoleDialog">
         </CheckRoleDialog>
 
-        <RoleGrantDialog
+        <!--<RoleGrantDialog
                 :dialogFormVisible="grantRoleDialogVisible"
                 :currentItem="currentGrantItem"
                 @closeRoleGrantDialog="closeRoleGrantDialog">
@@ -70,8 +77,8 @@
 
 <script type="text/ecmascript-6">
      import AddRoleDialog from './Role/AddRoleDialog.vue'
-    // import EditRoleDialog from './Role/EditRoleDialog.vue'
-    // import CheckRoleDialog from './Role/CheckRoleDialog.vue'
+     import EditRoleDialog from './Role/EditRoleDialog.vue'
+     import CheckRoleDialog from './Role/CheckRoleDialog.vue'
     // import RoleGrantDialog from './Role/RoleGrantDialog.vue'
     import {BaseURL} from '../api/config.js';
     const columns = [{
@@ -162,7 +169,7 @@
             },
 
             //查看角色按钮响应
-            handleCheck(index, row){
+            handleCheck(row){
                 this.currentCheckItem = row;
                 this.checkRolePermissionDialogVisible = true;
             },
@@ -185,8 +192,8 @@
                 this.grantRoleDialogVisible = false;
             },
 
-            //编辑菜单按钮响应
-            handleEdit(index, row){
+            //编辑部门按钮响应
+            onEdit(row){
                 this.currentEditItem = row;
                 this.editRoleDialogVisible = true;
             },
@@ -291,8 +298,8 @@
 
         components: {
              AddRoleDialog,
-            // EditRoleDialog,
-            // CheckRoleDialog,
+             EditRoleDialog,
+             CheckRoleDialog,
             // RoleGrantDialog
         }
     }

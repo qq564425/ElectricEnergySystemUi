@@ -18,7 +18,7 @@
                     >   
                         <template slot="content">
                             <div>
-                                <addTree @changeFormValue="changeFormValue" @hide="hide" :showTree="showTree"></addTree>
+                                <editTree @changeFormValue="changeFormValue" @hide="hide"></editTree>
                             </div> 
                         </template>
                         <a @click="hide" slot="content">关闭</a>
@@ -91,14 +91,13 @@
 
 <script>
 import {BaseURL} from '../../api/config.js';
-import addTree from './AddDepTree.vue';
+import editTree from './EditDepTree.vue';
     export default {
         props: ['dialogFormVisible','currentItem'],
         data() {
             return {
                 form: this.$form.createForm(this),
                 visible: false,
-                showTree: 'add'
             }
         },
 
@@ -203,8 +202,12 @@ import addTree from './AddDepTree.vue';
                         }
                     )
                     .then(res => {
-                        console.log(res.data);
-                        that.changeCurrentRowFormValue(res.data==''?'所有部门':res.data,'',newval.order,newval.name);
+                        res.data = res.data.toString()
+                        if(res.data.indexOf(",") != -1){
+                           that.changeCurrentRowFormValue(res.data.split(',')[0],res.data.split(',')[1],newval.order,newval.name);
+                        }else{
+                           that.changeCurrentRowFormValue('所有部门',res.data,newval.order,newval.name);
+                        }
                     })
                     .catch(err => console.log("连接失败"))
                 }
@@ -223,12 +226,7 @@ import addTree from './AddDepTree.vue';
         },
 
         components: {
-            addTree
+            editTree
         }
-    }
-
-    //根据id初始化树形控件
-    function initializeTree(TemplateId, setting, treeData){
-        $.fn.zTree.init($("#" + TemplateId), setting, treeData);
     }
 </script>

@@ -1,6 +1,6 @@
 <template>
    <div style="height:600px;overflow:auto" ref="xx">
-      <ul id="depttree2" class="ztree"></ul>
+      <ul id="depttree3" class="ztree"></ul>
   </div>
 </template>
 
@@ -61,7 +61,7 @@ export default {
                                     onCheck: that.zTreeOnCheck
                                 },
                             };
-                            initializeTree('depttree2', setting2, treeData)
+                            initializeTree('depttree3', setting2, treeData)
                     },
                     function(){
                         console.log('failed');

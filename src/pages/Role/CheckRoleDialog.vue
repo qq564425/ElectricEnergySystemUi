@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog 
+        <!-- <el-dialog 
           :visible.sync="rolecheckPermissionVisible" 
           :show-close="false" 
           width="30%"
@@ -16,12 +16,20 @@
             <div slot="footer" class="dialog-footer">
                 <el-button @click="closeCheck">关闭</el-button>
             </div>
-        </el-dialog>
+        </el-dialog> -->
+        <a-modal 
+          title="查看角色"
+          v-model="rolecheckPermissionVisible"
+          @ok="closeCheck"
+          @cancel="closeCheck">
+          <CheckTree :currentItem="currentItem" ref="mychild"></CheckTree>
+        </a-modal>
     </div>
 </template>
 
 <script>
 import {BaseURL} from '../../api/config'
+import CheckTree from './CheckRoleTree.vue'
     export default {
         props: ['dialogFormVisible', 'currentItem'],
         data() {
@@ -31,59 +39,10 @@ import {BaseURL} from '../../api/config'
         },
 
         methods: {
-            //根据id初始化当前所要查看的角色的树形控件
-            loadCheckTree(roleId){
-                let that = this;
-                that.$ajax.get
-                (
-                    `${BaseURL}/main/get-role-show-permissions?`+'roleId=' + roleId
-                ).then(function(res)
-                    {
-                        if(res.data.msg == 'Login Required'){
-                           that.changeShowNaviPage(false);
-                            that.$confirm('您的账号登录过期或已在别处登录，请重新登录！', '提示', {
-                            confirmButtonText: '确定',
-                            cancelButtonText: '取消',
-                            type: 'warning'
-                            }).then(() => {
-                            
-                            }).catch(() => {
-                                        
-                            });
-                            return;
-                        }
-                        let ChecktreeData = res.data.data;
-                        let setting = {
-                            data: {
-                                simpleData: {
-                                    enable: true
-                                },
-                            },
-
-                            check: {
-                                enable: true,
-                                chkStyle: "checkbox",
-                            },
-                        };
-                        initializeTree('roleTree2', setting, ChecktreeData)
-                    },
-                    function(){
-                        console.log('failed');
-                    });
-            },
-
             //关闭查看
             closeCheck(){
                 this.$emit('closeCheckRoleDialog')
             }
-        },
-
-        watch: {
-            currentItem: function (newval, oldval) {
-                if(newval) {
-                    this.loadCheckTree(newval.id)
-                }
-            },
         },
 
         computed: {
@@ -95,11 +54,21 @@ import {BaseURL} from '../../api/config'
 
                 }
             },
-        }
-    }
+        },
 
-    //根据id初始化树形控件
-    function initializeTree(TemplateId, setting, treeData){
-        $.fn.zTree.init($("#" + TemplateId), setting, treeData);
+        components: {
+            CheckTree
+        },
+
+        watch: {
+        currentItem: function (newval, oldval) {
+            if(newval) {
+              console.log(newval);
+               setTimeout(()=>{
+                     this.$refs.mychild.loadCheckTree(newval.id)
+                },0)
+            }
+        },
     }
+}
 </script>
