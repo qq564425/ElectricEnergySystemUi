@@ -23,6 +23,9 @@
                                <a href="javascript:;" @click="onEdit(record)"><a-icon type="edit" />编辑</a>
                             </span>
                             <span style="margin-left:10px">
+                               <a href="javascript:;" @click="handleGrant(record)"><a-icon type="file-protect" />授权</a>
+                            </span>
+                            <span style="margin-left:10px">
                                 <a-popconfirm
                                 v-if="tableData.length"
                                 title="确定删除?"
@@ -67,11 +70,11 @@
                 @closeCheckRoleDialog="closeCheckRoleDialog">
         </CheckRoleDialog>
 
-        <!--<RoleGrantDialog
+        <RoleGrantDialog
                 :dialogFormVisible="grantRoleDialogVisible"
                 :currentItem="currentGrantItem"
                 @closeRoleGrantDialog="closeRoleGrantDialog">
-        </RoleGrantDialog> -->
+        </RoleGrantDialog>
     </div>
 </template>
 
@@ -79,7 +82,7 @@
      import AddRoleDialog from './Role/AddRoleDialog.vue'
      import EditRoleDialog from './Role/EditRoleDialog.vue'
      import CheckRoleDialog from './Role/CheckRoleDialog.vue'
-    // import RoleGrantDialog from './Role/RoleGrantDialog.vue'
+    import RoleGrantDialog from './Role/RoleGrantDialog.vue'
     import {BaseURL} from '../api/config.js';
     const columns = [{
         title: '角色键值',
@@ -181,7 +184,7 @@
             },
 
             //打开角色授权对话框
-            handleGrant(index, row){
+            handleGrant(row){
                 this.currentGrantItem = row;
                 this.grantRoleDialogVisible = true;
             },
@@ -300,7 +303,7 @@
              AddRoleDialog,
              EditRoleDialog,
              CheckRoleDialog,
-            // RoleGrantDialog
+             RoleGrantDialog
         }
     }
 </script>

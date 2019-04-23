@@ -1,22 +1,5 @@
 <template>
     <div>
-        <!-- <el-dialog 
-          :visible.sync="rolecheckPermissionVisible" 
-          :show-close="false" 
-          width="30%"
-          :close-on-click-modal="false"
-          :close-on-press-escape="false">
-            <div slot="title" class="dialog-title">
-                <span style="font-weight:bold;font-size:1.1em">查看权限</span>
-                <div style="padding-left:25%;padding-top:20px;height:600px;overflow:auto">
-                    <span id="roleTree2" class="ztree"></span>
-                </div>
-            </div>
-
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="closeCheck">关闭</el-button>
-            </div>
-        </el-dialog> -->
         <a-modal 
           title="查看角色"
           v-model="rolecheckPermissionVisible"
