@@ -19,7 +19,22 @@
           <a-menu-item key="3">角色管理</a-menu-item>
           <a-menu-item key="4">权限管理</a-menu-item>
           <a-menu-item key="5">菜单管理</a-menu-item>
-          <a-menu-item key="6">test</a-menu-item>
+          <a-menu-item key="12">test</a-menu-item>
+        </a-sub-menu>
+
+        <a-sub-menu key="sub3">
+          <span slot="title"><a-icon type="setting" /><span>电能消耗信息</span></span>
+          <a-menu-item key="7">小时耗电量</a-menu-item>
+          <a-menu-item key="3-2">日耗电量</a-menu-item>
+          <a-menu-item key="3-3">月耗电量</a-menu-item>
+        </a-sub-menu>
+
+        <a-sub-menu key="sub4">
+          <span slot="title"><a-icon type="setting" /><span>统计分析</span></span>
+          <a-menu-item key="8">三相电压统计</a-menu-item>
+          <a-menu-item key="9">三相电流统计</a-menu-item>
+          <a-menu-item key="10">正反向电能统计</a-menu-item>
+          <a-menu-item key="11">象限电能统计</a-menu-item>
         </a-sub-menu>
       </a-menu>
     </a-layout-sider>
@@ -32,7 +47,7 @@
           @click="()=> collapsed = !collapsed"
         />
         <a-avatar icon="user" style="margin-left:81%"/>
-        <span>狡猾</span>
+        <span>hdnav</span>
       </font> 
       </a-layout-header>
       <a-layout-content :style="{ margin: '24px 16px 0', overflow: 'initial',marginTop:'5%'}">
@@ -41,7 +56,7 @@
         </div>
       </a-layout-content>
       <a-layout-footer :style="{ textAlign: 'center' }">
-        能源管理系统 ©2019 Created by WWW
+        能源管理系统 ©2019 Created by HDNAV
       </a-layout-footer>
     </a-layout>
   </a-layout>
@@ -69,8 +84,22 @@ export default {
          this.$router.push({path: '/Permission'});
       }else if(e.key == '5'){
          this.$router.push({path: '/Menu'});
-      }else if(e.key == '6'){
+      }else if(e.key == '7'){
+         this.$router.push({path: '/HourlyPowerConsumption'});
+      }else if(e.key == '8'){
+         this.$router.push({path: '/VoltageStatistics'});
+      }else if(e.key == '9'){
+         this.$router.push({path: '/CurrentStatistics'});
+      }else if(e.key == '10'){
+         this.$router.push({path: '/PositiveAndReverseElectricEnergyStatistics'});
+      }else if(e.key == '11'){
+         this.$router.push({path: '/QuadrantElectricEnergyStatistics'});
+      }else if(e.key == '12'){
          this.$router.push({path: '/Test'});
+      }else if(e.key == '3-2'){
+         this.$router.push({path: '/DailyPowerConsumption'});
+      }else if(e.key == '3-3'){
+         this.$router.push({path: '/MonthlyPowerConsumption'});
       }
     },  
 

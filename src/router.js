@@ -26,6 +26,13 @@ const router = new Router({
       route('/Permission', 'Permission', '权限管理'),
       route('/Menu', 'Menu', '菜单管理'),
       route('/Test', 'Test', '测试666'),
+      route('/HourlyPowerConsumption', 'HourlyPowerConsumption', '小时耗电量'),
+      route('/DailyPowerConsumption', 'DailyPowerConsumption', '日耗电量'),
+      route('/MonthlyPowerConsumption', 'MonthlyPowerConsumption', '月耗电量'),
+      route('/VoltageStatistics', 'VoltageStatistics', '三相电压统计'),
+      route('/CurrentStatistics', 'CurrentStatistics', '三相电流统计'),
+      route('/PositiveAndReverseElectricEnergyStatistics', 'PositiveAndReverseElectricEnergyStatistics', '正反向电能统计'),
+      route('/QuadrantElectricEnergyStatistics', 'QuadrantElectricEnergyStatistics', '象限电能'),
     ])
   ]
 })

@@ -3,11 +3,9 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-import main from './Modules/moduleMain'
-import shipBaseInfo from './Modules/ShipBaseInfo'
+import moduleSearch from './Modules/search'
 export default new Vuex.Store({
     modules: {
-       main: main,
-       shipBaseInfo,shipBaseInfo
+        moduleSearch,moduleSearch
     }
 })
