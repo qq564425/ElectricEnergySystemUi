@@ -55,8 +55,8 @@ module.exports = (options = {}) => ({
     extensions: ['.js', '.vue', '.json', '.css']
   },
   devServer: {
-    host: 'localhost',
-    port: 8010,
+    host: '190.0.15.246',
+    port: 8012,
     proxy: {
       '/api/': {
         target: 'http://190.0.15.246:8080',
@@ -68,7 +68,8 @@ module.exports = (options = {}) => ({
     },
     historyApiFallback: {
       index: url.parse(options.dev ? '/assets/' : publicPath).pathname
-    }
+    },
+    disableHostCheck: true
   },
-  devtool: options.dev ? '#eval-source-map' : '#source-map'
+  devtool: options.dev ? '#eval-source-map' : '#source-map',
 })

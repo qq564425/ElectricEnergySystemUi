@@ -1,13 +1,16 @@
 <template>
   <div style="box-shadow: 2px 2px 5px #888888;background-color:#FFFFFF;border-radius:5px;">
     <div style="background-color:#5CACEE;padding:5px;overflow:hidden;height:33px;color:white;">
-      <span style="font-size:1.2em;float:left;">小时耗电量</span>
+      <span style="font-size:1.2em;float:left;">月耗电量</span>
     </div>
     <a-table :columns="columns" 
          :dataSource="tableData"
          :pagination="false" 
          :scroll="{ x: '240%',y:300}"
-         bordered>    
+         bordered>
+      <template slot="aquadrantVoltage" slot-scope="aquadrantVoltage">
+        {{getOnePoint(aquadrantVoltage)}}
+      </template>    
     </a-table>
 
       <div align="center" style="margin-top:2px;">
@@ -207,6 +210,11 @@ export default {
       this.currentPage = page;
       this.loadData();
     },
+
+    //去掉一位小数
+    getOnePoint(val){
+       return parseFloat(val).toFixed(1);
+    }
    },
 
    mounted() {

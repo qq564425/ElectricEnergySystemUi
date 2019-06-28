@@ -81,10 +81,10 @@
     <div style="box-shadow: 2px 2px 5px #888888;background-color:#FFFFFF;border-radius:5px;margin-top:20px">
         <div style="background-color:#5CACEE;padding:5px;overflow:hidden;height:33px;color:white;">
             <span style="font-size:1.2em;float:left;">统计图表</span>
-            <el-radio-group id="myradio" v-model="radio2" @change="radioChange2" style="font-size:1.2em;float:left;margin-left:20px;margin-top:3px">
+            <!-- <el-radio-group id="myradio" v-model="radio2" @change="radioChange2" style="font-size:1.2em;float:left;margin-left:20px;margin-top:3px">
                 <el-radio :label="3">折线-柱状图</el-radio>
                 <el-radio :label="6">饼状图</el-radio>
-            </el-radio-group>
+            </el-radio-group> -->
         </div>
         <div style="width:100%;height:40px;text-align:center;line-height:40px;font-size:18px" v-show="radio==6?true:false">
           <strong>{{startDateTitle}} 至 {{endDateTitle}} 三相电压小时统计</strong>

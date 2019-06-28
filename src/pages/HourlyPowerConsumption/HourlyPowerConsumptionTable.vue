@@ -7,7 +7,10 @@
          :dataSource="tableData"
          :pagination="false" 
          :scroll="{ x: '240%',y:300}"
-         bordered>    
+         bordered>
+      <template slot="aquadrantVoltage" slot-scope="aquadrantVoltage">
+        {{getOnePoint(aquadrantVoltage)}}
+      </template>    
     </a-table>
 
       <div align="center" style="margin-top:2px;">
@@ -207,6 +210,11 @@ export default {
       this.currentPage = page;
       this.loadData();
     },
+
+    //去掉一位小数
+    getOnePoint(val){
+       return parseFloat(val).toFixed(1);
+    }
    },
 
    mounted() {

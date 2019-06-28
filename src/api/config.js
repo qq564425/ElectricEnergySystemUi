@@ -1,3 +1,3 @@
-let BaseURL = 'http://localhost:8081';
+let BaseURL = 'http://190.0.15.246:8082';
 let powerURL = 'http://2430481u0l.zicp.vip';
 export {BaseURL,powerURL};
